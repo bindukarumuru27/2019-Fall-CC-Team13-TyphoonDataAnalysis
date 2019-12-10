@@ -1,0 +1,77 @@
+PD<-pacific
+head(PD)
+
+dt = sort(sample(nrow(PD), nrow(PD)*.98))
+train<-PD[dt,]
+test<-PD[-dt,]
+
+install.packages("rlang")
+install.packages("devtools")
+update.packages()
+library(devtools)
+install_github("easyGgplot2", "kassambara")
+
+library(ggplot2)
+
+a = ggplot() + 
+  geom_line(data = test, aes(x = test$Status, y = test$Maximum.Wind), color = "blue") +
+  geom_line(data = test, aes(x = test$Status, y = test$Maximum.Wind), color = "red") +
+  xlab('Status') +
+  ylab('Maximum Wind')
+print(a)
+
+b = ggplot() + 
+  geom_line(data = test, aes(x = test$Time, y = test$Maximum.Wind), color = "blue") +
+  geom_line(data = test, aes(x = test$Time, y = test$Maximum.Wind), color = "red") +
+  xlab('Time') +
+  ylab('Maximum Wind')
+
+print(b)
+
+
+c = ggplot() + 
+  geom_line(data = test, aes(x = test$Date, y = test$Maximum.Wind), color = "blue") +
+  geom_line(data = test, aes(x = test$Date, y = test$Maximum.Wind), color = "blue") +
+  xlab('Date') +
+  ylab('Maximum Wind')
+
+print(c)
+
+
+head(pacific)
+dt = sort(sample(nrow(pacific), nrow(pacific)*.95))
+train<-pacific[dt,]
+test<-pacific[-dt,]
+par("mar")
+par(mar=c(1,1,1,1))
+plot(pacific$Time ~ pacific$`Maximum Wind`, data = pacific)
+plot(pacific$Time ~ pacific$`Maximum Wind`, xlab='Time', ylab = 'Maximum wind', pch=16, col="blue")
+
+install.packages("devtools")
+library(devtools)
+hist(pacific$`Maximum Wind`)
+hist(pacific$`Maximum Wind`, breaks=c(10, 20, 40, 900))
+hist(pacific$`Maximum Wind`, xlab="Max wind", ylab="Frequency of max wind")
+hist(pacific$`Maximum Wind`, xlim=c(10,90), ylim=c(0,50))
+library(ggplot2)
+ggplot2(pacific, aes(x=pacific$`Maximum Wind`)) + geom_histogram()
+
+
+ggplot(pacific, aes(x=pacific$`Maximum Wind`, color=pacific$Status)) +
+  geom_histogram(fill="white", position="dodge")+
+  theme(legend.position="top")
+
+library(plyr)
+mu <- ddply(pacific, "Status", summarise, grp.mean=mean(pacific$`Maximum Wind`))
+
+p<-ggplot(pacific, aes(x=pacific$`Maximum Wind`))+
+  geom_histogram(color="black", fill="white")+
+  facet_grid(pacific$Name ~ .)
+p
+# Add mean lines
+p+geom_vline(data=mu, aes(xintercept=grp.mean, color="red"),
+             linetype="dashed")
+
+
+PD<- table(PD$Status)
+barplot(PD, xlab="Status" , ylab="Frequency", main= "Frequency of wind",col=rainbow(length(PD)))
