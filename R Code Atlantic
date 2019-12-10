@@ -1,0 +1,42 @@
+AD<-atlantic
+head(AD)
+
+dt = sort(sample(nrow(AD), nrow(AD)*.98))
+train<-AD[dt,]
+test<-AD[-dt,]
+
+install.packages("rlang")
+install.packages("devtools")
+update.packages()
+library(devtools)
+install_github("easyGgplot2", "kassambara")
+
+library(ggplot2)
+
+q = ggplot() + 
+  geom_line(data = test, aes(x = test$Status, y = test$Maximum.Wind), color = "blue") +
+  geom_line(data = test, aes(x = test$Status, y = test$Maximum.Wind), color = "red") +
+  xlab('Status') +
+  ylab('Maximum Wind')
+print(q)
+
+t = ggplot() + 
+  geom_line(data = test, aes(x = test$Time, y = test$Maximum.Wind), color = "blue") +
+  geom_line(data = test, aes(x = test$Time, y = test$Maximum.Wind), color = "red") +
+  xlab('Time') +
+  ylab('Maximum Wind')
+
+print(t)
+
+
+d = ggplot() + 
+  geom_line(data = test, aes(x = test$Date, y = test$Maximum.Wind), color = "blue") +
+  geom_line(data = test, aes(x = test$Date, y = test$Maximum.Wind), color = "blue") +
+  xlab('Date') +
+  ylab('Maximum Wind')
+
+print(d)
+
+
+AD<- table(AD$Status)
+barplot(AD, xlab="Status" , ylab="Frequency", main= "Frequency of wind",col=rainbow(length(AD)))
